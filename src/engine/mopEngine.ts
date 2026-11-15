@@ -1,4 +1,4 @@
-export type MopsPhase =
+export type MopPhase =
   | 'PRINTER_PROMPT'
   | 'TEAM_NAME'
   | 'COMMAND'
@@ -69,8 +69,8 @@ export interface CompletedSessionSummary {
   survivalFactor: string;
 }
 
-export interface MopsState {
-  phase: MopsPhase;
+export interface MopState {
+  phase: MopPhase;
   nextLineId: number;
   terminalLines: TerminalLine[];
   printerLog: string[];
@@ -185,7 +185,7 @@ function fmtMoney(value: number): string {
 }
 
 function pushLines(
-  state: MopsState,
+  state: MopState,
   entries: Array<{ text: string; kind?: TerminalLineKind }>
 ): void {
   for (const entry of entries) {
@@ -197,7 +197,7 @@ function pushLines(
   }
 }
 
-function pushClsDivider(state: MopsState, label?: string): void {
+function pushClsDivider(state: MopState, label?: string): void {
   if (state.terminalLines.length > 0) {
     state.terminalLines.push({
       id: state.nextLineId++,
@@ -207,7 +207,7 @@ function pushClsDivider(state: MopsState, label?: string): void {
   }
 }
 
-function appendHelpLines(state: MopsState): void {
+function appendHelpLines(state: MopState): void {
   pushClsDivider(state, 'HELP');
   pushLines(state, [
     { text: '    **** HELP ****', kind: 'heading' },
@@ -232,7 +232,7 @@ function appendHelpLines(state: MopsState): void {
   ]);
 }
 
-function promptCommand(state: MopsState): void {
+function promptCommand(state: MopState): void {
   state.phase = 'COMMAND';
   pushLines(state, [
     { text: '' },
@@ -240,7 +240,7 @@ function promptCommand(state: MopsState): void {
   ]);
 }
 
-function initGameArrays(state: MopsState, preservePrinterFlag: boolean): void {
+function initGameArrays(state: MopState, preservePrinterFlag: boolean): void {
   const printerFlag = preservePrinterFlag ? state.L[20] : 1;
 
   state.S = new Array(34).fill(0);
@@ -292,8 +292,8 @@ function initGameArrays(state: MopsState, preservePrinterFlag: boolean): void {
   state.weeklyHistory = [];
 }
 
-export function createInitialMopsState(): MopsState {
-  const state: MopsState = {
+export function createInitialMopState(): MopState {
+  const state: MopState = {
     phase: 'PRINTER_PROMPT',
     nextLineId: 1,
     terminalLines: [],
@@ -331,7 +331,7 @@ export function createInitialMopsState(): MopsState {
   initGameArrays(state, false);
 
   pushLines(state, [
-    { text: 'MOPS — MANAGEMENT ORDERING AND PRODUCTION SYNTHESIS', kind: 'heading' },
+    { text: 'MOP — MANAGEMENT ORDERING & PROCESSING SYNTHESIS', kind: 'heading' },
     { text: 'COPYRIGHT (C) 1980 · THE POLYTECHNIC NEWCASTLE UPON TYNE', kind: 'muted' },
     { text: 'SPECIFICATION: B H CLAYBOURNE · PROGRAM: R REED', kind: 'muted' },
     { text: '' },
@@ -341,18 +341,18 @@ export function createInitialMopsState(): MopsState {
   return state;
 }
 
-function enterTeamNamePrompt(state: MopsState): void {
+function enterTeamNamePrompt(state: MopState): void {
   initGameArrays(state, true);
   state.phase = 'TEAM_NAME';
   pushClsDivider(state, 'NEW SESSION');
   pushLines(state, [
-    { text: '     *** M O P S ***', kind: 'heading' },
+    { text: '     *** M O P ***', kind: 'heading' },
     { text: '' },
     { text: 'PRODUCTION TEAMS NAME ?', kind: 'heading' },
   ]);
 }
 
-function startNewWeek(state: MopsState): void {
+function startNewWeek(state: MopState): void {
   state.week = state.week + 1;
   if (state.week > 32) {
     pushClsDivider(state, 'END OF GAME');
@@ -417,7 +417,7 @@ function startNewWeek(state: MopsState): void {
   promptCommand(state);
 }
 
-function runWeekSimulation(state: MopsState): void {
+function runWeekSimulation(state: MopState): void {
   const w = state.week;
   state.M[6] = state.P[1] + state.P[2] + state.P[3] + state.P[4] + state.P[5];
 
@@ -639,7 +639,7 @@ function runWeekSimulation(state: MopsState): void {
   state.phase = 'REPORT_WAIT_1';
 }
 
-function advanceReport1(state: MopsState): void {
+function advanceReport1(state: MopState): void {
   const lines: Array<{ text: string; kind?: TerminalLineKind }> = [];
   if (state.P_factor > 0) {
     lines.push({
@@ -678,7 +678,7 @@ function advanceReport1(state: MopsState): void {
   state.phase = 'REPORT_WAIT_2';
 }
 
-function advanceReport2(state: MopsState): void {
+function advanceReport2(state: MopState): void {
   const w = state.week;
   const lines: Array<{ text: string; kind?: TerminalLineKind }> = [
     { text: '' },
@@ -696,7 +696,7 @@ function advanceReport2(state: MopsState): void {
   state.phase = 'REPORT_WAIT_3';
 }
 
-function advanceReport3(state: MopsState): void {
+function advanceReport3(state: MopState): void {
   const w = state.week;
   const lines: Array<{ text: string; kind?: TerminalLineKind }> = [
     { text: '' },
@@ -720,7 +720,7 @@ function advanceReport3(state: MopsState): void {
   state.phase = 'REPORT_WAIT_4';
 }
 
-function startQuizPhase(state: MopsState): void {
+function startQuizPhase(state: MopState): void {
   const w = state.week;
   const queue: QuizQuestion[] = [];
   let pendingPreLines: string[] = [];
@@ -836,7 +836,7 @@ function startQuizPhase(state: MopsState): void {
   emitCurrentQuizPrompt(state);
 }
 
-function emitCurrentQuizPrompt(state: MopsState): void {
+function emitCurrentQuizPrompt(state: MopState): void {
   const q = state.quizQueue[state.quizIndex];
   if (!q) return;
 
@@ -849,7 +849,7 @@ function emitCurrentQuizPrompt(state: MopsState): void {
   pushLines(state, [{ text: q.prompt, kind: 'heading' }]);
 }
 
-function finishQuizPhase(state: MopsState): void {
+function finishQuizPhase(state: MopState): void {
   pushLines(state, [
     { text: '' },
     { text: `CUMULATIVE : COSTS         = ${fmtMoney(state.T[7])}` },
@@ -861,7 +861,7 @@ function finishQuizPhase(state: MopsState): void {
   state.phase = 'POST_QUIZ_WAIT';
 }
 
-function enterFinalAnalysis(state: MopsState): void {
+function enterFinalAnalysis(state: MopState): void {
   const w = state.week;
   const optProfit = Math.floor(state.T[6] + 0.9) * 4.45;
   const profitFactor =
@@ -919,7 +919,7 @@ function enterFinalAnalysis(state: MopsState): void {
   state.phase = 'GAME_OVER';
 }
 
-export function buildFinalSummary(state: MopsState): CompletedSessionSummary | null {
+export function buildFinalSummary(state: MopState): CompletedSessionSummary | null {
   if (state.week <= 13 && state.weeklyHistory.length === 0) return null;
   const profitFactor =
     state.T[6] > 0 ? Math.floor((100 * state.T[10]) / (state.T[6] * 4.45)) / 100 : null;
@@ -942,9 +942,9 @@ export function buildFinalSummary(state: MopsState): CompletedSessionSummary | n
   };
 }
 
-export function processMopsInput(prev: MopsState, rawInput: string): MopsState {
+export function processMopInput(prev: MopState, rawInput: string): MopState {
   // Shallow-clone state & arrays cleanly for React immutability
-  const state: MopsState = {
+  const state: MopState = {
     ...prev,
     terminalLines: [...prev.terminalLines],
     printerLog: [...prev.printerLog],

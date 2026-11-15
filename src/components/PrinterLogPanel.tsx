@@ -1,9 +1,9 @@
 import React from 'react';
 import { Download, Printer } from 'lucide-react';
-import { MopsState } from '../engine/mopsEngine';
+import { MopState } from '../engine/mopEngine';
 
 interface PrinterLogPanelProps {
-  state: MopsState;
+  state: MopState;
 }
 
 export const PrinterLogPanel: React.FC<PrinterLogPanelProps> = ({ state }) => {
@@ -11,7 +11,7 @@ export const PrinterLogPanel: React.FC<PrinterLogPanelProps> = ({ state }) => {
 
   const buildTranscriptText = (): string => {
     const header = [
-      'MOPS — DEVICE 4 LINE-PRINTER & SESSION RECORD',
+      'MOP — DEVICE 4 LINE-PRINTER & SESSION RECORD',
       `TEAM: ${state.teamName || 'UNNAMED'}`,
       `WEEK: ${state.week}`,
       '============================================',
@@ -49,7 +49,7 @@ export const PrinterLogPanel: React.FC<PrinterLogPanelProps> = ({ state }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `mops-${(state.teamName || 'session').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.txt`;
+    a.download = `mop-${(state.teamName || 'session').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

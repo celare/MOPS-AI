@@ -1,14 +1,14 @@
 import React from 'react';
 import {
   CompletedSessionSummary,
-  MopsState,
+  MopState,
   SHIFT_CAPS,
   SHIFT_COSTS,
   SHIFT_SHORT_NAMES,
-} from '../engine/mopsEngine';
+} from '../engine/mopEngine';
 
 interface LedgerPanelProps {
-  state: MopsState;
+  state: MopState;
   pastSessions: CompletedSessionSummary[];
   onQuickCommand: (cmd: string) => void;
   onClearHistory: () => void;

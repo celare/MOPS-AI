@@ -45,7 +45,7 @@ export const PWAInstallButton: React.FC = () => {
             <div className="w-full max-w-sm rounded-2xl border border-[#26343a] bg-[#12191c] p-6 shadow-2xl">
               <div className="flex items-start justify-between gap-4">
                 <h3 id="ios-install-title" className="text-base font-semibold text-[#e6edf0]">
-                  Install MOPS on iOS
+                  Install MOP on iOS
                 </h3>
                 <button
                   type="button"
@@ -59,7 +59,7 @@ export const PWAInstallButton: React.FC = () => {
               <ol className="mt-4 space-y-2.5 text-sm leading-relaxed text-[#b7c5ca]">
                 <li>1. Tap the Share button in the Safari toolbar.</li>
                 <li>2. Scroll down and select Add to Home Screen.</li>
-                <li>3. Tap Add to launch MOPS offline anytime.</li>
+                <li>3. Tap Add to launch MOP offline anytime.</li>
               </ol>
               <button
                 type="button"

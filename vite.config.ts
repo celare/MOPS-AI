@@ -14,8 +14,8 @@ export default defineConfig(() => {
         includeAssets: ['icon.svg', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png', 'pwa-maskable-512x512.png'],
         manifest: {
           id: '/',
-          name: 'MOPS — Management Ordering & Production Synthesis',
-          short_name: 'MOPS',
+          name: 'Management Ordering & Processing Synthesis',
+          short_name: 'MOP',
           description: 'Interactive text-based operations management simulation PWA faithful to the 1980 Commodore PET BASIC program.',
           theme_color: '#0b0f10',
           background_color: '#0b0f10',
@@ -44,7 +44,9 @@ export default defineConfig(() => {
           ],
         },
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+          globPatterns: ['**/*.{js,mjs,css,html,ico,png,svg,woff,woff2}'],
+          maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+          navigateFallbackDenylist: [/^\/assets\//, /\.pdf$/i],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -78,13 +80,13 @@ export default defineConfig(() => {
               urlPattern: /\/assets\/aistudio\/.*\.pdf$/i,
               handler: 'CacheFirst',
               options: {
-                cacheName: 'mops-source-pdf-cache',
+                cacheName: 'mop-source-pdf-v2',
                 expiration: {
-                  maxEntries: 2,
+                  maxEntries: 4,
                   maxAgeSeconds: 60 * 60 * 24 * 365,
                 },
                 cacheableResponse: {
-                  statuses: [0, 200],
+                  statuses: [200],
                 },
               },
             },
@@ -92,7 +94,7 @@ export default defineConfig(() => {
         },
         devOptions: {
           enabled: true,
-          type: 'module',
+          type: 'classic',
         },
       }),
     ],

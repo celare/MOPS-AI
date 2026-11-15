@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CornerDownLeft, RotateCcw, Trash2 } from 'lucide-react';
-import { MopsState, SHIFT_CAPS, SHIFT_SHORT_NAMES } from '../engine/mopsEngine';
+import { MopState, SHIFT_CAPS, SHIFT_SHORT_NAMES } from '../engine/mopEngine';
 
 interface TerminalViewProps {
-  state: MopsState;
+  state: MopState;
   onSubmitInput: (value: string) => void;
   onNewGame: () => void;
   onClearScrollback: () => void;
@@ -134,7 +134,7 @@ export const TerminalView: React.FC<TerminalViewProps> = ({
 
   return (
     <section
-      aria-label="MOPS Interactive Text Terminal"
+      aria-label="MOP Interactive Text Terminal"
       className="flex h-full min-h-[460px] flex-col overflow-hidden rounded-2xl border border-[#223036] bg-[#0d1315]"
     >
       {/* Terminal Bezel Toolbar */}
@@ -301,7 +301,7 @@ export const TerminalView: React.FC<TerminalViewProps> = ({
           </button>
         ) : (
           <form onSubmit={handleFormSubmit} className="flex items-center gap-2">
-            <label htmlFor="mops-terminal-input" className="sr-only">
+            <label htmlFor="mop-terminal-input" className="sr-only">
               {hint.label}
             </label>
             <div className="relative flex flex-1 items-center rounded-xl border border-[#26343a] bg-[#080c0d] px-3 focus-within:border-emerald-400">
@@ -310,7 +310,7 @@ export const TerminalView: React.FC<TerminalViewProps> = ({
               </span>
               <input
                 ref={inputRef}
-                id="mops-terminal-input"
+                id="mop-terminal-input"
                 type="text"
                 inputMode={hint.inputMode}
                 value={inputValue}

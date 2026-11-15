@@ -109,8 +109,17 @@ export const ReferencePanel: React.FC = () => {
         </div>
 
         <h3 className="mt-4 text-xs font-medium text-[#9eb0b7]">
-          Customer Shortage Cost: INT(F × rate + 0.9) × 4.45
+          Customer Shortage Cost: INT(Units Short × Rate + 0.9) × 4.45
         </h3>
+        <p className="mt-1 text-xs leading-relaxed text-[#8ca0a7]">
+          Where <span className="font-mono text-[#dce7ea]">Units Short</span> (
+          <span className="font-mono text-[#dce7ea]">F</span>) is unsatisfied demand (
+          <span className="font-mono text-[#dce7ea]">Demand − Met</span>),{' '}
+          <span className="font-mono text-[#dce7ea]">Rate</span> is taken from the tier below,{' '}
+          <span className="font-mono text-[#dce7ea]">INT(… + 0.9)</span> rounds up, and{' '}
+          <span className="font-mono text-[#dce7ea]">4.45</span> is unit margin. Tracked
+          separately toward the final Survival Factor.
+        </p>
         <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 font-mono text-xs tabular-nums text-[#dce7ea]">
           <span>1 – 10 short:</span>
           <span className="text-right">rate 0.50</span>

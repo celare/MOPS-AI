@@ -10,33 +10,37 @@ import { TerminalView } from './components/TerminalView';
 import {
   buildFinalSummary,
   CompletedSessionSummary,
-  createInitialMopsState,
-  MopsState,
-  processMopsInput,
-} from './engine/mopsEngine';
+  createInitialMopState,
+  MopState,
+  processMopInput,
+} from './engine/mopEngine';
 
 type ActiveTab = 'terminal' | 'ledger' | 'reference' | 'printer';
 
-const SESSION_STORAGE_KEY = 'mops_active_session_v1';
-const HISTORY_STORAGE_KEY = 'mops_session_history_v1';
+const SESSION_STORAGE_KEY = 'mop_active_session_v1';
+const HISTORY_STORAGE_KEY = 'mop_session_history_v1';
+const LEGACY_SESSION_KEY = 'mops_active_session_v1';
+const LEGACY_HISTORY_KEY = 'mops_session_history_v1';
 
-function loadSavedState(): MopsState {
+function loadSavedState(): MopState {
   try {
-    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
-    if (!raw) return createInitialMopsState();
-    const parsed = JSON.parse(raw) as MopsState;
+    const raw =
+      localStorage.getItem(SESSION_STORAGE_KEY) || localStorage.getItem(LEGACY_SESSION_KEY);
+    if (!raw) return createInitialMopState();
+    const parsed = JSON.parse(raw) as MopState;
     if (parsed && Array.isArray(parsed.terminalLines) && typeof parsed.week === 'number') {
       return parsed;
     }
   } catch {
     // Ignore corrupted storage
   }
-  return createInitialMopsState();
+  return createInitialMopState();
 }
 
 function loadPastSessions(): CompletedSessionSummary[] {
   try {
-    const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+    const raw =
+      localStorage.getItem(HISTORY_STORAGE_KEY) || localStorage.getItem(LEGACY_HISTORY_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
@@ -46,24 +50,24 @@ function loadPastSessions(): CompletedSessionSummary[] {
 }
 
 export default function App() {
-  const [mopsState, setMopsState] = useState<MopsState>(loadSavedState);
+  const [mopState, setMopState] = useState<MopState>(loadSavedState);
   const [pastSessions, setPastSessions] = useState<CompletedSessionSummary[]>(loadPastSessions);
   const [mobileTab, setMobileTab] = useState<ActiveTab>('terminal');
   const [desktopSideTab, setDesktopSideTab] = useState<'ledger' | 'reference' | 'printer'>('ledger');
   const [isAboutOpen, setIsAboutOpen] = useState(false);
-  const prevPhaseRef = useRef(mopsState.phase);
+  const prevPhaseRef = useRef(mopState.phase);
 
   useEffect(() => {
     try {
-      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(mopsState));
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(mopState));
     } catch {
       // Ignore storage quota errors
     }
-  }, [mopsState]);
+  }, [mopState]);
 
   useEffect(() => {
-    if (prevPhaseRef.current !== 'GAME_OVER' && mopsState.phase === 'GAME_OVER') {
-      const summary = buildFinalSummary(mopsState);
+    if (prevPhaseRef.current !== 'GAME_OVER' && mopState.phase === 'GAME_OVER') {
+      const summary = buildFinalSummary(mopState);
       if (summary) {
         setPastSessions((prev) => {
           const updated = [summary, ...prev].slice(0, 15);
@@ -76,28 +80,28 @@ export default function App() {
         });
       }
     }
-    prevPhaseRef.current = mopsState.phase;
-  }, [mopsState]);
+    prevPhaseRef.current = mopState.phase;
+  }, [mopState]);
 
   const handleSubmitInput = useCallback((value: string) => {
-    setMopsState((prev) => processMopsInput(prev, value));
+    setMopState((prev) => processMopInput(prev, value));
   }, []);
 
   const handleNewGame = useCallback(() => {
-    const fresh = createInitialMopsState();
-    setMopsState(fresh);
+    const fresh = createInitialMopState();
+    setMopState(fresh);
     setMobileTab('terminal');
   }, []);
 
   const handleClearScrollback = useCallback(() => {
-    setMopsState((prev) => ({
+    setMopState((prev) => ({
       ...prev,
       terminalLines: prev.terminalLines.slice(-12),
     }));
   }, []);
 
   const handleQuickCommand = useCallback((cmd: string) => {
-    setMopsState((prev) => processMopsInput(prev, cmd));
+    setMopState((prev) => processMopInput(prev, cmd));
     setMobileTab('terminal');
   }, []);
 
@@ -130,7 +134,7 @@ export default function App() {
             }}
             className="text-lg font-bold tracking-tight text-[#e6edf0] whitespace-nowrap shrink-0"
           >
-            MOPS
+            MOP
           </a>
 
           <nav
@@ -214,7 +218,7 @@ export default function App() {
             } lg:block lg:col-span-7 xl:col-span-8 h-[calc(100dvh-9.5rem)] lg:h-[calc(100dvh-6.75rem)]`}
           >
             <TerminalView
-              state={mopsState}
+              state={mopState}
               onSubmitInput={handleSubmitInput}
               onNewGame={handleNewGame}
               onClearScrollback={handleClearScrollback}
@@ -269,27 +273,27 @@ export default function App() {
             <div className="lg:hidden">
               {mobileTab === 'ledger' && (
                 <LedgerPanel
-                  state={mopsState}
+                  state={mopState}
                   pastSessions={pastSessions}
                   onQuickCommand={handleQuickCommand}
                   onClearHistory={handleClearHistory}
                 />
               )}
               {mobileTab === 'reference' && <ReferencePanel />}
-              {mobileTab === 'printer' && <PrinterLogPanel state={mopsState} />}
+              {mobileTab === 'printer' && <PrinterLogPanel state={mopState} />}
             </div>
 
             <div className="hidden lg:block">
               {desktopSideTab === 'ledger' && (
                 <LedgerPanel
-                  state={mopsState}
+                  state={mopState}
                   pastSessions={pastSessions}
                   onQuickCommand={handleQuickCommand}
                   onClearHistory={handleClearHistory}
                 />
               )}
               {desktopSideTab === 'reference' && <ReferencePanel />}
-              {desktopSideTab === 'printer' && <PrinterLogPanel state={mopsState} />}
+              {desktopSideTab === 'printer' && <PrinterLogPanel state={mopState} />}
             </div>
           </aside>
         </div>

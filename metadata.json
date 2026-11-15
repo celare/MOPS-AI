@@ -1,6 +1,8 @@
 {
-  "name": "MOPS — Management Ordering & Production Synthesis",
+  "name": "Management Ordering & Processing Synthesis",
   "description": "Interactive text-based operations management simulation PWA faithful to the 1980 Commodore PET BASIC program.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
